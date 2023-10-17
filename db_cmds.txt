@@ -1,0 +1,5 @@
+Up Migration 
+goose mysql "root:password@/rssagg?parseTime=true" up
+
+SQLC model generation 
+sqlc generate
