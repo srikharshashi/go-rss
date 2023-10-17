@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/cors"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
-	"github.com/srikharshashi/go-projects/go-rss/internal/database"
+	"github.com/srikharshashi/go-rss/internal/database"
 )
 
 // this type database.Queries is exposed by SQLC generate code in internal

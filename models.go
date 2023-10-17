@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/srikharshashi/go-projects/go-rss/internal/database"
+	"github.com/srikharshashi/go-rss/internal/database"
 )
 
 type User struct {

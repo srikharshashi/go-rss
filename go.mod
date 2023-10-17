@@ -1,4 +1,4 @@
-module github.com/srikharshashi/go-projects/go-rss
+module github.com/srikharshashi/go-rss
 
 go 1.21.1
 

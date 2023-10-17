@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/srikharshashi/go-projects/go-rss/internal/database"
+	"github.com/srikharshashi/go-rss/internal/database"
 )
 
 //here what we have done is we made this function a methods for the type apiConfig instead
