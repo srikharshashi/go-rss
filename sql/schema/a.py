@@ -1,2 +1,0 @@
-a='f8c57ccb8cdf35d80afc1a58738ea4838121b6b957fb05d628117c38086cdefc'
-print(len(a))

@@ -7,7 +7,7 @@ import (
 )
 
 
-func respondWithJSON(w http.ResponseWriter,code int,payload interface{}){
+func respondWithJSON(w http.ResponseWriter,code int,payload interface{}) {
 
 	data,err:=json.Marshal(payload)
 	if(err!=nil){

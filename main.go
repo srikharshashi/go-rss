@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,7 +15,7 @@ import (
 
 // this type database.Queries is exposed by SQLC generate code in internal
 // has ro be added manually
-type apiConfig struct {
+type ApiConfig struct {
 	DB *database.Queries
 }
 
@@ -41,7 +40,7 @@ func main() {
 	}
 
 	queries := database.New(db)
-	apiCfg := apiConfig{
+	apiCfg := ApiConfig{
 		DB: queries,
 	}
 
@@ -58,9 +57,12 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/healthz", handlerError)
-	v1Router.Get("/error", handlerError)
-	v1Router.Post("/users", apiCfg.handlerCreateUser)
+	v1Router.Get("/healthz",HandlerReadiness )
+	v1Router.Get("/error", HandlerError)
+	v1Router.Post("/users", apiCfg.HandlerCreateUser)
+	v1Router.Get("/users",apiCfg.MiddleWareAuth(apiCfg.handlerGetUser))
+	v1Router.Post("/feeds",apiCfg.MiddleWareAuth(apiCfg.HandlerCreateFeed))
+	v1Router.Get("/feeds",apiCfg.HandlerGetFeeds)
 
 	router.Mount("/v1", v1Router)
 
