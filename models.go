@@ -2,7 +2,6 @@ package main
 
 import (
 	"time"
-
 	"github.com/srikharshashi/go-rss/internal/database"
 )
 
@@ -60,4 +59,12 @@ func databaseFeedstoFeeds(dbFeed []database.Feed) []Feed {
 	}
 	return feeds
 
+}
+
+type FeedFollows struct {
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	UserID    string    `json:"user_id"`
+	FeedID    string    `json:"feed_id"`
 }
