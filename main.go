@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	_ "github.com/go-sql-driver/mysql"
@@ -32,10 +33,9 @@ func main() {
 		log.Fatal("DBURL IS NOT FOUND IN ENV")
 	}
 
-
 	db, err := sql.Open("mysql", DBURL)
 	if err != nil {
-		
+
 		log.Fatal("DB Connection Failed", err)
 	}
 
@@ -57,13 +57,14 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/healthz",HandlerReadiness )
+	v1Router.Get("/healthz", HandlerReadiness)
 	v1Router.Get("/error", HandlerError)
 	v1Router.Post("/users", apiCfg.HandlerCreateUser)
-	v1Router.Get("/users",apiCfg.MiddleWareAuth(apiCfg.handlerGetUser))
-	v1Router.Post("/feeds",apiCfg.MiddleWareAuth(apiCfg.HandlerCreateFeed))
-	v1Router.Get("/feeds",apiCfg.HandlerGetFeeds)
-	v1Router.Post("/follow-feeds",apiCfg.MiddleWareAuth(apiCfg.HandlerFollowFeed))
+	v1Router.Get("/users", apiCfg.MiddleWareAuth(apiCfg.handlerGetUser))
+	v1Router.Post("/feeds", apiCfg.MiddleWareAuth(apiCfg.HandlerCreateFeed))
+	v1Router.Get("/feeds", apiCfg.HandlerGetFeeds)
+	v1Router.Post("/feed_follow", apiCfg.MiddleWareAuth(apiCfg.HandlerCreateFeedFollow))
+	v1Router.Get("/feed-follow",apiCfg.MiddleWareAuth(apiCfg.handlerGetUseFollowFeed));
 
 	router.Mount("/v1", v1Router)
 

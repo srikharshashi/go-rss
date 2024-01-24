@@ -22,7 +22,7 @@ func (apiCfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Reques
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, fmt.Sprintf("Error parsing JSON", err), 400)
+		respondWithError(w, fmt.Sprintf("Error parsing JSON %v", err), 400)
 		return
 	}
 
@@ -34,7 +34,10 @@ func (apiCfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Reques
 		CreatedAt: time_now,
 		UpdatedAt: time_now,
 		Name:      params.Name,
-		Url:       params.Url,
+		Url: sql.NullString{
+			String: params.Url,
+			Valid:  true,
+		},
 		UserID: sql.NullString{
 			String: db_user.ID,
 			Valid:  true,
@@ -68,7 +71,7 @@ func (apicfg *ApiConfig) HandlerGetFeeds(w http.ResponseWriter, r *http.Request)
 
 }
 
-func (apiconfig *ApiConfig) HandlerFollowFeed(w http.ResponseWriter, r *http.Request, db_user database.User) {
+func (apiconfig *ApiConfig) HandlerCreateFeedFollow(w http.ResponseWriter, r *http.Request, db_user database.User) {
 	type parameters struct {
 		FeedId string `json:"feed_id"`
 	}
@@ -94,6 +97,7 @@ func (apiconfig *ApiConfig) HandlerFollowFeed(w http.ResponseWriter, r *http.Req
 
 	if err != nil {
 		respondWithError(w, fmt.Sprintf("Error in Adding Feed-Follow to database %v", err), 400)
+		return
 	}
 
 	res := FeedFollows{
@@ -105,4 +109,41 @@ func (apiconfig *ApiConfig) HandlerFollowFeed(w http.ResponseWriter, r *http.Req
 	}
 
 	respondWithJSON(w, 201, res)
+}
+
+func (apiCfg *ApiConfig) handlerGetUseFollowFeed(w http.ResponseWriter, r *http.Request, db_user database.User) {
+
+	db_feed_follows, err := apiCfg.DB.GetFeedFollowsByUser(r.Context(), db_user.ID)
+	if err != nil {
+		respondWithError(w, fmt.Sprintf("Error in Fetching Feeds user follows %v", err), 400)
+		return
+	}
+	if len(db_feed_follows) == 0 {
+		respondWithError(w, fmt.Sprintf("User doesn't follow any Feeds %v", err), 400)
+		return
+
+	}
+
+	feeds := []Feed{}
+
+	for _, feed := range db_feed_follows {
+		db_feed, err := apiCfg.DB.GetFeedByID(r.Context(), feed.ID)
+		if err != nil {
+			respondWithError(w, fmt.Sprintf("Error in Fetching Feeds user follows %v", err), 400)
+			return
+		}
+
+		feeds = append(feeds, Feed{
+			ID:        db_feed.ID,
+			CreatedAt: db_feed.CreatedAt,
+			Name:      db_feed.Name,
+			UpdatedAt: db_feed.UpdatedAt,
+			Url:       db_feed.Url.String,
+			User_id:   feed.UserID,
+		})
+
+	}
+
+	respondWithJSON(w, 200, feeds)
+
 }
